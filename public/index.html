@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#123b35">
+<title>Ranking Farmacêutico 30hrs | Queimados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar"><a class="brand" href="#"><span class="brand-mark">Q</span><span>RANKING <small>QUEIMADOS 2026</small></span></a><span class="top-tag">CONCURSO • IAN</span></header>
+<main>
+<section class="hero">
+  <div class="hero-copy"><span class="eyebrow">PAINEL COLABORATIVO</span><h1>Farmacêutico 30hrs<br><em>Queimados</em></h1><p>Simule sua pontuação, compartilhe seu resultado e acompanhe o desempenho dos candidatos.</p>
+  <div class="hero-actions"><a class="btn btn-light" href="#simulador">Calcular minha nota</a><a class="btn btn-ghost" href="#ranking">Ver ranking ↓</a></div></div>
+  <div class="hero-card"><span class="hero-card-label">PONTUAÇÃO MÁXIMA</span><strong>100</strong><span>pontos na prova objetiva</span><div class="mini-bars"><i></i><i></i><i></i><i></i></div><small>40 questões • 4 áreas de conhecimento</small></div>
+</section>
+<section class="stats" id="estatisticas">
+ <article><span>CANDIDATOS CADASTRADOS</span><strong id="total-candidatos">0</strong></article>
+ <article><span>MAIOR NOTA REGISTRADA</span><strong id="maior-nota">—</strong></article>
+ <article><span>MÉDIA DOS PARTICIPANTES</span><strong id="media-notas">—</strong></article>
+ <article><span>NOTA DE CORTE DA AMOSTRA</span><strong id="nota-corte">—</strong><small>10 primeiras posições</small></article>
+</section>
+<section class="content-grid">
+ <div class="panel simulator" id="simulador">
+  <div class="section-heading"><div><span class="eyebrow dark">CALCULADORA</span><h2>Simule sua nota</h2></div><span class="pill">40 questões</span></div>
+  <p class="muted">Informe seus acertos. A pontuação é calculada automaticamente conforme os pesos informados.</p>
+  <form id="candidate-form">
+   <label class="field-label" for="candidate-name">Nome ou identificação</label><input id="candidate-name" maxlength="60" placeholder="Ex.: Carlos" required>
+   <label class="field-label" for="category">Modalidade</label><select id="category"><option>Ampla concorrência</option><option>Cotas</option></select>
+   <div class="score-list">
+    <div class="score-row"><div><b>Português</b><small>10 questões • peso 1</small></div><input aria-label="Acertos Português" id="portugues" type="number" min="0" max="10" value="0"><strong id="p-portugues">0,00</strong></div>
+    <div class="score-row"><div><b>Legislação Municipal</b><small>10 questões • peso 1</small></div><input aria-label="Acertos Legislação" id="legislacao" type="number" min="0" max="10" value="0"><strong id="p-legislacao">0,00</strong></div>
+    <div class="score-row"><div><b>Saúde Pública / SUS</b><small>5 questões • peso 4</small></div><input aria-label="Acertos SUS" id="sus" type="number" min="0" max="5" value="0"><strong id="p-sus">0,00</strong></div>
+    <div class="score-row"><div><b>Conhecimentos específicos</b><small>15 questões • peso 4</small></div><input aria-label="Acertos específicos" id="especificos" type="number" min="0" max="15" value="0"><strong id="p-especificos">0,00</strong></div>
+   </div>
+   <div class="result-box"><div><span>SUA PONTUAÇÃO</span><small id="correct-count">0 de 40 acertos</small></div><strong id="total-score">0,00 <small>pontos</small></strong></div>
+   <p class="notice">O resultado é uma simulação colaborativa, não uma classificação oficial. Confira o edital e os critérios de desempate.</p>
+   <button class="btn btn-primary full" type="submit">Enviar resultado ao ranking</button>
+   <div id="form-message" role="status"></div>
+  </form>
+ </div>
+ <div class="side-column">
+  <div class="panel rules"><span class="eyebrow dark">COMO FUNCIONA</span><h2>Transparência na classificação</h2><ul><li>Cadastre seus acertos por disciplina.</li><li>A nota ponderada é calculada automaticamente.</li><li>Consulte os resultados por modalidade.</li><li>Compartilhe o link com outros candidatos.</li><li>Errou algo? Exclua seu envio no ranking e envie de novo.</li></ul><div class="formula"><b>Fórmula da nota</b><p>(Português × 1) + (Legislação × 1) + (SUS × 4) + (Específicos × 4)</p></div></div>
+  <div class="panel weights"><h3>Distribuição da prova</h3><div class="weight"><span>Português</span><div><i style="width:10%"></i></div><b>10%</b></div><div class="weight"><span>Legislação</span><div><i style="width:10%"></i></div><b>10%</b></div><div class="weight"><span>SUS</span><div><i style="width:20%"></i></div><b>20%</b></div><div class="weight"><span>Específicos</span><div><i style="width:60%"></i></div><b>60%</b></div></div>
+ </div>
+</section>
+<section class="panel ranking-panel" id="ranking">
+ <div class="section-heading"><div><span class="eyebrow dark">RESULTADOS DA COMUNIDADE</span><h2>Ranking colaborativo</h2><p class="muted">Notas informadas pelos próprios participantes. Seus envios aparecem marcados com <b>Você</b> e podem ser excluídos por você, neste aparelho.</p></div><button class="btn btn-outline" id="share-button">Compartilhar</button></div>
+ <div class="ranking-controls"><div class="tabs"><button class="tab active" data-filter="Todos">Todos</button><button class="tab" data-filter="Ampla concorrência">Ampla concorrência</button><button class="tab" data-filter="Cotas">Cotas</button></div><input id="search" placeholder="Buscar candidato..." aria-label="Buscar candidato"></div>
+ <div class="table-wrap"><table><thead><tr><th>POS.</th><th>CANDIDATO</th><th>MODALIDADE</th><th>ACERTOS</th><th>NOTA</th><th class="actions-col"><span class="sr-only">Ações</span></th></tr></thead><tbody id="ranking-body"><tr><td colspan="6" class="empty">Carregando ranking...</td></tr></tbody></table></div>
+ <p class="notice">A classificação exibida considera apenas os cadastros recebidos neste painel. Empates são apresentados com a mesma pontuação; a posição oficial depende dos critérios do edital.</p>
+</section>
+<footer><b>Ranking Farmacêutico 30hrs • Queimados</b><span>Projeto independente e colaborativo. Não oficial.</span><a href="https://www.gov.br" target="_blank" rel="noopener">Consulte sempre os canais oficiais do concurso.</a></footer>
+</main>
+<script src="app.js"></script>
+</body></html>
