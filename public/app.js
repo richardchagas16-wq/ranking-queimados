@@ -139,6 +139,11 @@ async function load() {
       name: x.nome,
       category: x.modalidade,
       correct: x.acertos,
+      portugues: x.portugues,
+      legislacao: x.legislacao,
+      sus: x.sus,
+      especificos: x.especificos,
+      createdAt: x.createdAt,
       score: Number(x.nota)
     }));
 
@@ -259,6 +264,51 @@ document.querySelectorAll(".tab").forEach(btn => {
 });
 
 $("search").addEventListener("input", render);
+
+
+function csvCell(value) {
+  let text = String(value ?? "");
+  // Prevent spreadsheet formula execution when a CSV is opened in Excel/Sheets.
+  if (/^[\s]*[=+@\-]/.test(text)) text = "'" + text;
+  return '"' + text.replace(/"/g, '""') + '"';
+}
+
+$("backup-button").addEventListener("click", async () => {
+  const button = $("backup-button");
+  const originalText = button.textContent;
+  button.disabled = true;
+  button.textContent = "Preparando...";
+
+  try {
+    // Fetch the complete current ranking, regardless of active tab or search filter.
+    const res = await fetch("/api/candidatos", { cache: "no-store" });
+    if (!res.ok) throw new Error("Não foi possível consultar o ranking.");
+    const rows = await res.json();
+    const header = ["Posição", "Nome", "Modalidade", "Português", "Legislação", "SUS", "Específicos", "Acertos totais", "Nota", "Data do cadastro"];
+    const lines = [header, ...rows.map((x, i) => [
+      i + 1, x.nome, x.modalidade, x.portugues, x.legislacao, x.sus,
+      x.especificos, x.acertos, Number(x.nota).toFixed(2).replace(".", ","), x.createdAt
+    ])];
+    const csv = "\uFEFF" + lines.map(line => line.map(csvCell).join(";" )).join("\r\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const today = new Date().toLocaleDateString("sv-SE");
+    link.href = url;
+    link.download = `backup-ranking-farmaceutico-${today}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    button.textContent = "Backup baixado!";
+  } catch (error) {
+    alert(error.message || "Erro ao gerar o backup. Tente novamente.");
+    button.textContent = originalText;
+  } finally {
+    button.disabled = false;
+    setTimeout(() => { button.textContent = originalText; }, 2500);
+  }
+});
 
 $("share-button").addEventListener("click", async () => {
   try {
