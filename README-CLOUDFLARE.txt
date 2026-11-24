@@ -32,6 +32,7 @@ SEGURANÇA E LIMITAÇÕES
 - A nota é recalculada no servidor; o navegador não escolhe a nota final.
 - O token de exclusão em texto puro é entregue uma única vez ao navegador que enviou o registro; no banco fica apenas o SHA-256.
 - Se a pessoa apagar os dados do navegador ou trocar de aparelho, perde o botão de exclusão daquele envio.
+atualizacao.
 - Não existe login/verificação de identidade: o sistema garante que só quem tem o token daquele envio consegue excluí-lo, não prova que o nome informado pertence à pessoa.
 - Os registros do banco antigo da Netlify NÃO são transferidos por este pacote. Não apague nem encerre o banco antigo antes de decidir como exportar os registros.
 - Plano gratuito tem cotas e não garante disponibilidade ilimitada; acompanhe o uso no painel da Cloudflare.
