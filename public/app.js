@@ -9,6 +9,8 @@ const OWN_KEY = "ranking-meus-envios";
 
 let activeFilter = "Todos";
 let candidates = [];
+// A senha administrativa fica somente na memória desta aba e é enviada apenas por HTTPS.
+let adminPassword = "";
 
 const number = id => {
   const value = Number($(id).value);
@@ -112,7 +114,7 @@ function render() {
 
     tr.children[2].textContent = c.category;
 
-    if (mine) {
+    if (mine || adminPassword) {
       const del = document.createElement("button");
       del.type = "button";
       del.className = "btn-delete";
@@ -166,7 +168,8 @@ async function load() {
 async function removeEntry(candidate, button) {
   const own = ownEntries();
   const token = own[candidate.id];
-  if (!token) return;
+  const isAdmin = Boolean(adminPassword);
+  if (!isAdmin && !token) return;
 
   const ok = confirm(
     `Excluir o resultado "${candidate.name}" (${fmt(candidate.score)} pontos) do ranking?\n\nEssa ação não pode ser desfeita.`
@@ -179,15 +182,21 @@ async function removeEntry(candidate, button) {
   try {
     const res = await fetch(`/api/candidatos/${candidate.id}`, {
       method: "DELETE",
-      headers: { "x-delete-token": token }
+      headers: isAdmin
+        ? { "x-admin-password": adminPassword }
+        : { "x-delete-token": token }
     });
 
     if (res.ok || res.status === 404) {
-      delete own[candidate.id];
-      saveOwnEntries(own);
+      if (token) {
+        delete own[candidate.id];
+        saveOwnEntries(own);
+      }
       candidates = candidates.filter(c => c.id !== candidate.id);
       render();
-      $("form-message").textContent = "Seu resultado foi excluído do ranking.";
+      $("form-message").textContent = isAdmin
+        ? "Cadastro excluído pelo administrador."
+        : "Seu resultado foi excluído do ranking.";
       return;
     }
 
@@ -200,6 +209,42 @@ async function removeEntry(candidate, button) {
   button.disabled = false;
   button.textContent = "Excluir";
 }
+
+$("admin-button").addEventListener("click", async () => {
+  if (adminPassword) {
+    adminPassword = "";
+    $("admin-button").textContent = "Acesso administrador";
+    render();
+    $("form-message").textContent = "Modo administrador encerrado nesta aba.";
+    return;
+  }
+
+  const password = prompt("Digite a senha de administrador:");
+  if (!password) return;
+
+  const button = $("admin-button");
+  button.disabled = true;
+  try {
+    const res = await fetch("/api/admin/login", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ password })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      alert(data.error || "Senha incorreta ou acesso administrativo não configurado.");
+      return;
+    }
+    adminPassword = password;
+    button.textContent = "Sair do administrador";
+    $("form-message").textContent = "Modo administrador ativado. Agora você pode excluir qualquer cadastro.";
+    render();
+  } catch {
+    alert("Não foi possível validar a senha. Verifique sua conexão.");
+  } finally {
+    button.disabled = false;
+  }
+});
 
 $("candidate-form").addEventListener("submit", async e => {
   e.preventDefault();
